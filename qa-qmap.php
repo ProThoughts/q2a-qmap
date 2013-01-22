@@ -235,8 +235,13 @@
 					$generated_htmls[$column_title] .= "</div>";
 				}
 			} 
-			if ($page=="popular") {
-				$generated_htmls[$min_votes_current_bucket." to ".$max_votes_current_bucket." netvotes"] = $generated_htmls[$column_title_old];
+			if ($page=="popular") {				
+				$index = $min_votes_current_bucket." to ".$max_votes_current_bucket." netvotes";
+				if (array_key_exists($index,$generated_htmls)){
+					$generated_htmls[$index] .= $generated_htmls[$column_title_old];
+				}else{
+					$generated_htmls[$index] = $generated_htmls[$column_title_old];
+				}
 				unset($generated_htmls[$column_title_old]);
 			}
 				
