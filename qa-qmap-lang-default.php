@@ -19,9 +19,9 @@
 */
 
 	return array(
-		'title-qmap-popular' => 'Actions grouped by popularity',
-		'title-qmap-compliance' => 'Actions grouped by urgency',
-		'title-qmap-initiative' => 'Actions grouped by responsible stakeholder',
+		'title-qmap-popular' => 'Actions ordered by votes',
+		'title-qmap-compliance' => 'Actions grouped by timing',
+		'title-qmap-initiative' => 'Actions grouped by initiator',
 		'title-qmap-issue' => 'Actions grouped by issue',
 	);
 	
