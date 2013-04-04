@@ -130,11 +130,6 @@
 					$shortitle = $title[0];
 					if(strlen($shortitle)>50){
 						$shortitle=trim(substr($shortitle,0,51));
-/*						echo "\n\n substr(shortitle,0,26):".$shortitle."\n";
-						echo "strrev(shortitle):".strrev($shortitle)."\n";
-						echo "-strpos(strrev(shortitle),' '):".-strpos(strrev($shortitle)," ")."\n";
-						echo "substr(shortitle,0,-strpos(strrev(shortitle),' ')):".substr($shortitle,0,-strpos(strrev($shortitle)," "))."\n";
-*/						
 						$shortitle=substr($shortitle,0,-strpos(strrev($shortitle)," "))."...";
 					}
 					$shortitle.=" &nbsp; ";
