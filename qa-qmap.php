@@ -80,7 +80,7 @@
 			$selectsort='netvotes';
 			
 			@list($questions, $categories, $categoryid, $favorite)=qa_db_select_with_pending(
-				qa_db_qs_selectspec($userid, $selectsort, $start, $categoryslugs, null, false, false, qa_opt_if_loaded('page_size_qs')),
+				qa_db_qs_selectspec($userid, $selectsort, $start, $categoryslugs, null, false, false, 1000),
 				qa_db_category_nav_selectspec($categoryslugs, false, false, true),
 				$countslugs ? qa_db_slugs_to_category_id_selectspec($categoryslugs) : null,
 				($countslugs && isset($userid)) ? qa_db_is_favorite_selectspec($userid, QA_ENTITY_CATEGORY, $categoryslugs) : null
@@ -128,10 +128,16 @@
 					$qa_content['q_list']['qs'][]=qa_any_to_q_html_fields($question, $userid, qa_cookie_get(), $usershtml, null, $options);
 					$title = explode(":",$question['title']);
 					$shortitle = $title[0];
-					if(strlen($shortitle)>25){
-						$shortitle=substr($shortitle,0,26);
+					if(strlen($shortitle)>50){
+						$shortitle=trim(substr($shortitle,0,51));
+/*						echo "\n\n substr(shortitle,0,26):".$shortitle."\n";
+						echo "strrev(shortitle):".strrev($shortitle)."\n";
+						echo "-strpos(strrev(shortitle),' '):".-strpos(strrev($shortitle)," ")."\n";
+						echo "substr(shortitle,0,-strpos(strrev(shortitle),' ')):".substr($shortitle,0,-strpos(strrev($shortitle)," "))."\n";
+*/						
 						$shortitle=substr($shortitle,0,-strpos(strrev($shortitle)," "))."...";
 					}
+					$shortitle.=" &nbsp; ";
 					$qid=$question['postid'];
 					$poll_answers = qa_db_read_all_assoc(
 						qa_db_query_sub(
@@ -254,7 +260,7 @@
 					$qa_content['custom_2'].="
 					<div style='display: inline-block;vertical-align:top;margin-right:15px;margin-bottom:20px;'>
 						<div style='text-align: center;font-size: 17px;color: #393;margin-bottom:5px;'>".$key."</div>
-						<div style='border: 2px solid #00B344;border-radius: 10px;-moz-border-radius: 10px;box-shadow: 10px 10px 5px #BBB;background: #E5FFE5;width: 220px;padding: 4px;'>".$generated_html."</div>
+						<div style='border: 2px solid #00B344;border-radius: 10px;-moz-border-radius: 10px;box-shadow: 10px 10px 5px #BBB;background: #E5FFE5;width: 345px;padding: 4px;'>".$generated_html."</div>
 					</div>";
 				};
 			}	
