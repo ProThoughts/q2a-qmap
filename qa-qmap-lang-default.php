@@ -19,10 +19,12 @@
 */
 
 	return array(
-		'title-qmap-popular' => 'Actions ordered by votes',
+		'title-qmap-popular' => 'Actions ordered by likes',
 		'title-qmap-compliance' => 'Actions grouped by timing',
 		'title-qmap-initiative' => 'Actions grouped by initiator',
 		'title-qmap-issue' => 'Actions grouped by issue',
+		'title-qmap-all-except-issues' => 'Actions grouped by likes,timing and initiator',
+		'title-qmap-all' => 'Actions grouped by likes,timing, initiator and issue',
 	);
 	
 

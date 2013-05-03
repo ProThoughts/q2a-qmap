@@ -54,6 +54,16 @@
 					'request' => 'qmap-issue', 
 					'nav' => 'M',
 				),
+				array(
+					'title' => qa_lang_html('plugin_qmap/title-qmap-all'), 
+					'request' => 'qmap-all', 
+					'nav' => 'M',
+				),
+				array(
+					'title' => qa_lang_html('plugin_qmap/title-qmap-all-except-issues'), 
+					'request' => 'qmap-all-except-issues', 
+					'nav' => 'M',
+				),
 			);
 		}
 
@@ -69,8 +79,17 @@
 		
 		function process_request($request)
 		{
-			$page = str_replace("qmap-","",$request);
+			$pos = strpos($request,"submenu");
+			if ($pos!== false){
+				$submenu = substr($request,$pos+8);
+				$page = str_replace("qmap-","",substr($request,0,$pos-1));
+			}else{
+				$submenu = "popular";
+				$page = str_replace("qmap-","",$request);
+			}
+			
 			$qa_content=qa_content_prepare(); //Always start by assigning $qa_content=qa_content_prepare(); to include navigation menus and the like.
+			
 			
 			$categoryslugs=qa_request_parts(1);
 			$countslugs=count($categoryslugs);			
@@ -88,7 +107,53 @@
 			
 		//	get user information for display	
 			$usershtml=qa_userids_handles_html(qa_any_get_userids_handles($questions));
-	
+			
+			if ($page=="all"){
+				$qa_content['navigation']['sub'] = array(
+					'qmap-'.$page.'-submenu=popular' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=popular',
+						'label' => 'Popular',
+						'selected' => $submenu=="popular",
+					),
+					'qmap-'.$page.'-submenu=compliance' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=compliance',
+						'label' => 'Timing',
+						'selected' => $submenu=="compliance",
+					),
+					'qmap-'.$page.'-submenu=initiative' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=initiative',
+						'label' => 'Initiator',
+						'selected' => $submenu=="initiative",
+					),
+					'qmap-'.$page.'-submenu=issue' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=issue',
+						'label' => 'Issues',
+						'selected' => $submenu=="issue",
+					),
+				);
+				$page=$submenu;
+			}
+			if ($page=="all-except-issues"){
+				$qa_content['navigation']['sub'] = array(
+					'qmap-'.$page.'-submenu=popular' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=popular',
+						'label' => 'Popular',
+						'selected' => $submenu=="popular",
+					),
+					'qmap-'.$page.'-submenu=compliance' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=compliance',
+						'label' => 'Timing',
+						'selected' => $submenu=="compliance",
+					),
+					'qmap-'.$page.'-submenu=initiative' => array(
+						'url' => qa_path_html('qmap-'.$page).'-submenu=initiative',
+						'label' => 'Initiator',
+						'selected' => $submenu=="initiative",
+					),
+				);
+				$page=$submenu;
+			}
+			
 						
 			$qa_content['q_list']['qs']=array();
 			
@@ -205,7 +270,7 @@
 						$column_title = ''.floor($question_counter/count($questions)*3);
 						
 						if ($column_title!=$column_title_old&&$question_counter>0){
-							$index = $min_votes_current_bucket." to ".$max_votes_current_bucket." netvotes";
+							$index = $min_votes_current_bucket." to ".$max_votes_current_bucket." likes";
 							if (array_key_exists($index,$generated_htmls)){
 								$generated_htmls[$index] .= $generated_htmls[$column_title_old];
 							}else{
@@ -221,10 +286,12 @@
 					}
 					
 					if (!isset($generated_htmls[$column_title])){ $generated_htmls[$column_title] = "";};
+
+// 			<i style='background-image:url(qa-plugin/qmap/".$poll_answer_icon.")'></i> -> 			<i></i>
 					$generated_htmls[$column_title] .= "
 <div id='widget'><div class='btn-o'>
 		<a href='index.php?qa=".$qid."' class='btn tGrabber' id='qmap-q".$qid."'>
-			<i style='background-image:url(qa-plugin/qmap/".$poll_answer_icon.")'></i><span class='label' id='l'>".$shortitle."</span>
+			<i></i><span class='label' id='l'>".$shortitle."</span>
 		</a>
 	</div>";
 					if ($page!="issue"&&$number_of_votes!="0%") {
@@ -237,7 +304,7 @@
 				}
 			} 
 			if ($page=="popular") {				
-				$index = $min_votes_current_bucket." to ".$max_votes_current_bucket." netvotes";
+				$index = $min_votes_current_bucket." to ".$max_votes_current_bucket." likes";
 				if (array_key_exists($index,$generated_htmls)){
 					$generated_htmls[$index] .= $generated_htmls[$column_title_old];
 				}else{
@@ -246,8 +313,7 @@
 				unset($generated_htmls[$column_title_old]);
 			}
 				
-
-			$qa_content['title']=qa_lang_html('plugin_qmap/title-'.$request); //Use $qa_content['title'] 
+			$qa_content['title']=qa_lang_html('plugin_qmap/title-qmap-'.$page); //Use $qa_content['title'] 
 			$qa_content['custom_2']="<div class='hcount Itr ready count-ready' style=''>";
 //			print_r($generated_htmls);
 			foreach ($generated_htmls as $key => $generated_html){
@@ -260,6 +326,7 @@
 				};
 			}	
 			$qa_content['custom_2'].="</div>";
+
 
 			return $qa_content;
 		}
