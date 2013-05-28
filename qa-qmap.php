@@ -97,6 +97,7 @@
 			$start=qa_get_start();
 			$userid=qa_get_logged_in_userid();
 			$selectsort='netvotes';
+			$generated_htmls_hover=array();
 			
 			@list($questions, $categories, $categoryid, $favorite)=qa_db_select_with_pending(
 				qa_db_qs_selectspec($userid, $selectsort, $start, $categoryslugs, null, false, false, 1000),
@@ -164,7 +165,7 @@
 					$generated_htmls = array("2014-2015" => "","2016-2018" => "","2019-2023" => "","2024-2030" => "");
 				}else{
 					if ($page=="issue"){
-						$generated_htmls = array("Research and Development" => "","Economic conditions" => "","Speed up" => "","Certainty" => "","Role Understood" => "");
+						$generated_htmls = array("Role of CCS" => "","Research and Development" => "","Economic conditions" => "","Project conditions" => "","Long-term certainty" => "");
 					}else{
 							$generated_htmls = array();
 					}
@@ -259,6 +260,14 @@
 					}
 					if ($page=="issue") {
 						$column_title = $question['categoryname'];
+						if (!array_key_exists($column_title,$generated_htmls_hover)){
+							$categories=qa_db_read_all_assoc(qa_db_query_sub(
+								'SELECT content FROM ^categories WHERE title=#',
+								$question['categoryname']));
+							foreach ($categories as $category) {
+								$generated_htmls_hover[$column_title]=$category['content'];
+							}
+						}
 					}
 					if ($page=="popular") {
 						if($question_counter==0){
@@ -318,9 +327,18 @@
 //			print_r($generated_htmls);
 			foreach ($generated_htmls as $key => $generated_html){
 				if (strlen($generated_html) > 0){
+					$key_hover='';
+					if (array_key_exists($key,$generated_htmls_hover)){
+						$key_hover=$generated_htmls_hover[$key];
+					}
+					$strImage="";
+					if($page=="issue"){
+						$strAdjustedKey=str_replace(" ","-",strtolower($key));
+						$strImage="<a href='".$strAdjustedKey."'><img src='".$strAdjustedKey.".png' style='width:100px;'></a>";
+					}
 					$qa_content['custom_2'].="
 					<div style='display: inline-block;vertical-align:top;margin-right:15px;margin-bottom:20px;'>
-						<div style='text-align: center;font-size: 17px;color: #393;margin-bottom:5px;'>".$key."</div>
+						".$strImage."<a href='/ImplementationPlan/".$key."' title='".$key_hover."' style='text-align:center;font-size: 17px;color: #393;margin-bottom:5px;'>".$key."</a>
 						<div style='border: 2px solid #00B344;border-radius: 10px;-moz-border-radius: 10px;box-shadow: 10px 10px 5px #BBB;background: #E5FFE5;width: 345px;padding: 4px;'>".$generated_html."</div>
 					</div>";
 				};
